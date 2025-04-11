@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FCM Web Push Example</title>
+</head>
+<body>
+  <h2>Web Push Notifications</h2>
+  <button id="getTokenBtn">Generate FCM Token</button>
+
+  <!-- Firebase SDK (v8) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+
+  <script>
+    // ✅ Your Firebase project config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAdqSbTIG7CtMqhtxYRrZJdiKIckUpvDGE",
+      authDomain: "glozic-notification.firebaseapp.com",
+      projectId: "glozic-notification",
+      messagingSenderId: "401561422188",
+      appId: "1:401561422188:web:85bd8ca18fa8eb8018cb49"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    // Register service worker
+    // navigator.serviceWorker.register('firebase-messaging-sw.js')
+    //   .then((registration) => {
+    //     messaging.useServiceWorker(registration);
+    //   });
+
+    document.getElementById('getTokenBtn').addEventListener('click', async () => {
+      try {
+        await Notification.requestPermission();
+
+        const fcmToken = await messaging.getToken({
+          vapidKey: 'CQtJc-GigaPQfWQZb1XkAi7m75GyAxslu2-i1BZaUIQ'
+        });
+        // BA299O2wEO5egGN9Q6LRYjbTVX6u6OREtkdFF9CFX-75O8ttUCSKwvirh7ERFQJsDRCgxvIHtD2VhSd-wwfD4to
+        //CQtJc-GigaPQfWQZb1XkAi7m75GyAxslu2-i1BZaUIQ
+        if (fcmToken) {
+          console.log('✅ FCM Token:', fcmToken);
+
+          // // Send to backend
+          // await fetch('http://localhost:3000/save-fcm-token', {
+          //   method: 'POST',
+          //   headers: { 'Content-Type': 'application/json' },
+          //   body: JSON.stringify({ userId: '12345', fcmToken })
+          // });
+
+          // alert('Token saved to backend!');
+        } else {
+          alert('No token received.');
+        }
+      } catch (err) {
+        console.log('Token error', err);
+      }
+    });
+  </script>
+</body>
+</html>
